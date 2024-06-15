@@ -1,23 +1,33 @@
 using Microsoft.AspNetCore.Mvc;
 using GloboTicket.Catalog.Repositories;
 
-namespace GloboTicket.Catalog.Controllers;
-
-[ApiController]
-[Route("[controller]")]
-public class EventController : ControllerBase
+namespace GloboTicket.Catalog.Controllers
 {
-    private readonly IEventRepository _eventRepository;
-
-    private static int callcounter = 0;
-    private readonly ILogger<EventController> _logger;
-
-    public EventController(IEventRepository eventRepository, ILogger<EventController> logger)
+    [ApiController]
+    [Route("[controller]")]
+    public class EventController : ControllerBase
     {
-        _eventRepository = eventRepository;
-        _logger = logger;
-    }
+        private readonly IEventRepository _eventRepository;
+        private readonly ILogger<EventController> _logger;
 
+
+        public EventController(IEventRepository eventRepository, ILogger<EventController> logger)
+        {
+            _eventRepository = eventRepository;
+            _logger = logger;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            var events = await _eventRepository.GetEvents();
+            
+            if (events == null || !events.Any())
+            {
+                return NotFound("No events found");
+            }
+            
+            return Ok(events);
     // [HttpGet(Name = "GetEvents")]
     // public async Task<IActionResult> GetAll()
     // {
@@ -69,8 +79,39 @@ public class EventController : ControllerBase
             await _eventRepository.Save(@event);
             return CreatedAtRoute("GetEvents", new {id = @event.EventId}, @event);
         }
-        catch(Exception ex)
+
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] CreateEventRequest request)
         {
+            if(!ModelState.IsValid)
+                return BadRequest(ModelState);
+            
+            var @event = request.ToEvent();
+            
+            try
+            {
+                await _eventRepository.Save(@event);
+                return CreatedAtAction(nameof(GetById), new {id = @event.EventId}, @event);
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, "Error saving event");
+                return StatusCode(500, "Internal server error");
+            }
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(Guid id)
+        {        
+            var evt = await _eventRepository.GetEventById(id);
+            
+            if (evt == null)
+            {
+                return NotFound();
+            }
+            
+            return Ok(evt);
+        }
             _logger.LogError(ex, "Error saving event");
             return StatusCode(500, "Internal server error");
         }
