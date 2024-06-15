@@ -1,4 +1,10 @@
-/catalag/ @globaldevopsexperience/global-zealous-matsumoto
+# CODEOWNERS file
+# Este archivo define los dueños de varios directorios y archivos en el repositorio.
+
+# Define dueños para los directorios específicos
+/catalog/ @globaldevopsexperience/global-zealous-matsumoto
 /frontend/ @globaldevopsexperience/global-zealous-matsumoto
 /ordering/ @globaldevopsexperience/global-zealous-matsumoto
+
+# Define dueño para el archivo específico de configuración
 /.github/CODEOWNERS @globaldevopsexperience/global-zealous-matsumoto
