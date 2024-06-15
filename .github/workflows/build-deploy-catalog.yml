@@ -2,6 +2,7 @@ name: "Build and Release Catalog"
 permissions:
   actions: write
   contents: read
+  
 
 on:
   workflow_dispatch:
