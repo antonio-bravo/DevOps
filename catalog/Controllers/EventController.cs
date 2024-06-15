@@ -18,36 +18,79 @@ public class EventController : ControllerBase
         _logger = logger;
     }
 
+    // [HttpGet(Name = "GetEvents")]
+    // public async Task<IActionResult> GetAll()
+    // {
+    //     return Ok(await _eventRepository.GetEvents());
+    // }
+
     [HttpGet(Name = "GetEvents")]
     public async Task<IActionResult> GetAll()
     {
-        return Ok(await _eventRepository.GetEvents());
+        var events = await _eventRepository.GetEvents();
+        
+        if (events == null || !events.Any())
+        {
+            return NotFound("No events found");
+        }
+        
+        return Ok(events);
     }
+    // [HttpPost]
+    // public async Task<IActionResult> Create([FromBody] CreateEventRequest request)
+    // {
+    //     if(!request.IsValid)
+    //         return BadRequest();
+    
+    //     var @event = request.ToEvent();
+    
+    //     try
+    //     {
+    //         await _eventRepository.Save(@event);
+    //         return CreatedAtRoute("GetById", new {id = @event.EventId}, request);
+    //     }
+    //     catch(Exception ex)
+    //     {
+    //         _logger.LogError(ex, "Error saving event");
+    //         return StatusCode(500);
+    //     }
+    // }
 
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateEventRequest request)
     {
-        if(!request.IsValid)
-            return BadRequest();
-    
+        if(!ModelState.IsValid)
+            return BadRequest(ModelState);
+        
         var @event = request.ToEvent();
-    
+        
         try
         {
             await _eventRepository.Save(@event);
-            return CreatedAtRoute("GetById", new {id = @event.EventId}, request);
+            return CreatedAtRoute("GetEvents", new {id = @event.EventId}, @event);
         }
         catch(Exception ex)
         {
             _logger.LogError(ex, "Error saving event");
-            return StatusCode(500);
+            return StatusCode(500, "Internal server error");
         }
     }
-
-    [HttpGet("{id}", Name = "GetById")]
-    public async Task<IActionResult> GetById(Guid id)
+    // [HttpGet("{id}", Name = "GetById")]
+    // public async Task<IActionResult> GetById(Guid id)
+    // {        
+    //     var evt = await _eventRepository.GetEventById(id);
+    //     return Ok(evt);
+    // }
+    [HttpGet("{id}", Name = "GetEvent")]
+    public async Task<IActionResult> GetEvent(Guid id)
     {        
         var evt = await _eventRepository.GetEventById(id);
+        
+        if (evt == null)
+        {
+            return NotFound();
+        }
+        
         return Ok(evt);
     }
 }
