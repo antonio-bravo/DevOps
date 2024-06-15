@@ -11,6 +11,7 @@ namespace GloboTicket.Catalog.Controllers
         private readonly ILogger<EventController> _logger;
 
 
+
         public EventController(IEventRepository eventRepository, ILogger<EventController> logger)
         {
             _eventRepository = eventRepository;
@@ -34,53 +35,46 @@ namespace GloboTicket.Catalog.Controllers
     //     return Ok(await _eventRepository.GetEvents());
     // }
 
-    [HttpGet(Name = "GetEvents")]
-    public async Task<IActionResult> GetAll()
-    {
-        var events = await _eventRepository.GetEvents();
-        
-        if (events == null || !events.Any())
-        {
-            return NotFound("No events found");
-        }
-        
-        return Ok(events);
-    }
-    // [HttpPost]
-    // public async Task<IActionResult> Create([FromBody] CreateEventRequest request)
-    // {
-    //     if(!request.IsValid)
-    //         return BadRequest();
-    
-    //     var @event = request.ToEvent();
-    
-    //     try
-    //     {
-    //         await _eventRepository.Save(@event);
-    //         return CreatedAtRoute("GetById", new {id = @event.EventId}, request);
-    //     }
-    //     catch(Exception ex)
-    //     {
-    //         _logger.LogError(ex, "Error saving event");
-    //         return StatusCode(500);
-    //     }
-    // }
 
-    [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CreateEventRequest request)
-    {
-        if(!ModelState.IsValid)
-            return BadRequest(ModelState);
-        
-        var @event = request.ToEvent();
-        
-        try
+        public EventController(IEventRepository eventRepository, ILogger<EventController> logger)
         {
-            await _eventRepository.Save(@event);
-            return CreatedAtRoute("GetEvents", new {id = @event.EventId}, @event);
+            _eventRepository = eventRepository;
+            _logger = logger;
         }
 
+        /// <summary>
+        /// Obtiene todos los eventos
+        /// </summary>
+        /// <returns>Una lista de eventos</returns>
+        /// <response code="200">Retorna la lista de eventos</response>
+        /// <response code="404">Si no se encontraron eventos</response>  
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetAll()
+        {
+            var events = await _eventRepository.GetEvents();
+            
+            if (events == null || !events.Any())
+            {
+                return NotFound("No events found");
+            }
+            
+            return Ok(events);
+        }
+
+
+        /// <summary>
+        /// Crea un nuevo evento
+        /// </summary>
+        /// <param name="request">El objeto evento a crear</param>
+        /// <returns>El evento creado</returns>
+        /// <response code="201">Retorna el evento creado</response>
+        /// <response code="400">Si el objeto evento es nulo</response>  
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+
         public async Task<IActionResult> Create([FromBody] CreateEventRequest request)
         {
             if(!ModelState.IsValid)
@@ -91,13 +85,16 @@ namespace GloboTicket.Catalog.Controllers
             try
             {
                 await _eventRepository.Save(@event);
+
                 return CreatedAtAction(nameof(GetById), new {id = @event.EventId}, @event);
+
             }
             catch(Exception ex)
             {
                 _logger.LogError(ex, "Error saving event");
                 return StatusCode(500, "Internal server error");
             }
+
         }
 
         [HttpGet("{id}")]
@@ -115,23 +112,27 @@ namespace GloboTicket.Catalog.Controllers
             _logger.LogError(ex, "Error saving event");
             return StatusCode(500, "Internal server error");
         }
-    }
-    // [HttpGet("{id}", Name = "GetById")]
-    // public async Task<IActionResult> GetById(Guid id)
-    // {        
-    //     var evt = await _eventRepository.GetEventById(id);
-    //     return Ok(evt);
-    // }
-    [HttpGet("{id}", Name = "GetEvent")]
-    public async Task<IActionResult> GetEvent(Guid id)
-    {        
-        var evt = await _eventRepository.GetEventById(id);
-        
-        if (evt == null)
-        {
-            return NotFound();
+
+        /// <summary>
+        /// Obtiene un evento por su ID
+        /// </summary>
+        /// <param name="id">El ID del evento a obtener</param>
+        /// <returns>El evento solicitado</returns>
+        /// <response code="200">Retorna el evento solicitado</response>
+        /// <response code="404">Si el evento no se encuentra</response>  
+        [HttpGet("{id}", Name = "GetEvent")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetEvent(Guid id)
+        {        
+            var evt = await _eventRepository.GetEventById(id);
+            
+            if (evt == null)
+            {
+                return NotFound();
+            }
+            
+            return Ok(evt);
         }
-        
-        return Ok(evt);
     }
 }
