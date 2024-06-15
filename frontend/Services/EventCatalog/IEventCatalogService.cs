@@ -11,7 +11,7 @@ namespace GloboTicket.Frontend.Services
     {
         Task<IEnumerable<Event>> GetAll();
 
-        Task<Event> GetEvent(Guid id);
+        Task<Event> GetEventById(Guid id);
 
         Task CreateEvent(CreateEventRequest createEventRequest);
     }
