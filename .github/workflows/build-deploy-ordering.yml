@@ -35,7 +35,7 @@ jobs:
         run: dotnet publish ordering/ordering.csproj -c Release
 
       - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v4.5.0
+        uses: actions/upload-artifact@v4.6.0
         with:
           name: ordering
           path: ordering/bin/Release/net6.0/publish
