@@ -71,7 +71,7 @@ jobs:
           } while ($attempts -lt $maxAttempts)
 
       - name: Download artifact from build job
-        uses: actions/download-artifact@v4.1.9
+        uses: actions/download-artifact@v4.2.0
         with:
           name: ordering
           path: ordering
