@@ -72,7 +72,7 @@ jobs:
           } while ($attempts -lt $maxAttempts)
 
       - name: Download artifact from build job
-        uses: actions/download-artifact@v4.3.0
+        uses: actions/download-artifact@v5.0.0
         with:
           name: frontend
           path: frontend
