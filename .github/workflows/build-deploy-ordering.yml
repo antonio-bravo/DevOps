@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.run_number != 1 # don't run on the first execution after the repo creation to prevent errors
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
