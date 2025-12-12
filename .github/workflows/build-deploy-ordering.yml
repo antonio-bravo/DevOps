@@ -35,7 +35,7 @@ jobs:
         run: dotnet publish ordering/ordering.csproj -c Release
 
       - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v5.0.0
+        uses: actions/upload-artifact@v6.0.0
         with:
           name: ordering
           path: ordering/bin/Release/net6.0/publish
@@ -71,7 +71,7 @@ jobs:
           } while ($attempts -lt $maxAttempts)
 
       - name: Download artifact from build job
-        uses: actions/download-artifact@v6.0.0
+        uses: actions/download-artifact@v7.0.0
         with:
           name: ordering
           path: ordering
