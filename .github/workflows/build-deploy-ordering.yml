@@ -22,7 +22,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v6
         with:
-          dotnet-version: 6.0.x
+          dotnet-version: 10.0.401
           #cache: true <-- todo, implement caching from https://github.com/actions/setup-dotnet?tab=readme-ov-file#caching-nuget-packages
 
       - name: Restore dependencies
