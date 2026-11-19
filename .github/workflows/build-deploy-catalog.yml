@@ -90,7 +90,7 @@ jobs:
           package: catalog
 
       - name: Set Web App connectionstring
-        uses: devops-actions/azure-appservice-settings@v1
+        uses: devops-actions/azure-appservice-settings@v2.0.0
         with:
           app-name: ${{ vars.WEBAPP_CATALOG }}
           mask-inputs: false
